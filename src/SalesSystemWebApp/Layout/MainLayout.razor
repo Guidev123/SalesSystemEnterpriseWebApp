@@ -1,0 +1,54 @@
+﻿@using SalesSystemWebApp.Security
+@inherits LayoutComponentBase
+
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudText Typo="Typo.h5" Class="ml-3">Sales System</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudMainContent>
+        @*Body*@
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+    [Inject]
+    public IJwtAuthenticationStateProvider JwtAuthenticationStateProvider { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+
+    [Inject]
+    public ISnackbar Snackbar { get; set; } = default!;
+
+    private bool _isDrawerOpened = true;
+    private MudThemeProvider _mudThemeProvider = null!;
+    private bool _isDarkMode = true;
+    private bool IsAuthenticated { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsAuthenticated = await JwtAuthenticationStateProvider.CheckAuthenticatedAsync();
+    }
+
+    private void ToggleDrawer()
+    {
+        _isDrawerOpened = !_isDrawerOpened;
+    }
+
+    private async Task Logout()
+    {
+        await JwtAuthenticationStateProvider.RemoveTokenAsync();
+        IsAuthenticated = false;
+        StateHasChanged();
+        Snackbar.Add("You have successfully disconnected.", Severity.Info);
+        Navigation.NavigateTo("/");
+    }
+}
