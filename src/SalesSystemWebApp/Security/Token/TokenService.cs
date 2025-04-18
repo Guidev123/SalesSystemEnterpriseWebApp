@@ -10,13 +10,9 @@ namespace SalesSystemWebApp.Security.Token
             => await _jsRuntime.InvokeAsync<string>("localStorage.getItem", TOKEN_KEY);
 
         public async Task SetToken(string token)
-        {
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TOKEN_KEY, token);
-        }
+            => await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TOKEN_KEY, token);
 
         public async Task RemoveToken()
-        {
-            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", TOKEN_KEY);
-        }
+            => await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", TOKEN_KEY);
     }
 }

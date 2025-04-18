@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using SalesSystemWebApp.Responses;
 using SalesSystemWebApp.Security.Token;
 using SalesSystemWebApp.Services.Register;
 using SalesSystemWebApp.ViewModels;
@@ -7,11 +6,11 @@ using System.Security.Claims;
 
 namespace SalesSystemWebApp.Security
 {
-    public class JwtAuthenticationStateProvider(IRegisterService registerService, ITokenService tokenService)
+    public class JwtAuthenticationStateProvider(IRegistersService registerService, ITokenService tokenService)
         : AuthenticationStateProvider, IJwtAuthenticationStateProvider
     {
         private readonly ITokenService _tokenService = tokenService;
-        private readonly IRegisterService _registerService = registerService;
+        private readonly IRegistersService _registerService = registerService;
         private bool _isAuthenticated = false;
 
         public async Task<bool> CheckAuthenticatedAsync()
@@ -41,12 +40,11 @@ namespace SalesSystemWebApp.Security
         public void NotifyAuthenticationStateChanged()
             => NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 
-        private async Task<Response<UserViewModel>?> GetUser()
+        private async Task<ResponseViewModel<UserViewModel?>?> GetUser()
         {
             try
             {
-                var response = await _registerService.GetAsync();
-                return response;
+                return await _registerService.GetAsync();
             }
             catch
             {
@@ -64,7 +62,7 @@ namespace SalesSystemWebApp.Security
 
             claims.AddRange
             (
-               user.Claims.Where(x => x.Key != ClaimTypes.Name && x.Value != ClaimTypes.Email).Select(x => new Claim(x.Key, x.Value))
+               user.Roles.Select(x => new Claim("roles", x))
             );
 
             return claims;

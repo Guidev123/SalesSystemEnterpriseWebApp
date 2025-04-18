@@ -1,7 +1,80 @@
 ﻿@page "/"
+@layout MainLayout
+@inherits HomePage
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Catalog</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" GutterBottom="true">Products</MudText>
 
-Welcome to your new app.
+    @if (IsLoading)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="my-8" />
+        <MudText>Loading products...</MudText>
+        <MudPaper Class="pa-8 mt-4">
+            <MudSkeleton Height="55px" />
+            <MudSkeleton Height="210px" />
+            <MudSkeleton Height="155px" />
+            <MudSkeleton Height="210px" />
+            <MudSkeleton Height="50px" />
+        </MudPaper>
+    }
+    else if (ErrorMessage != null)
+    {
+        <MudAlert Severity="Severity.Error" Class="my-4">@ErrorMessage</MudAlert>
+    }
+    else if (response?.Data?.Products?.Any() != true)
+    {
+        <MudAlert Severity="Severity.Info" Class="my-4">No products found.</MudAlert>
+    }
+    else
+    {
+        <MudSelect T="int" Label="Items per page" Value="@InputModel.PageSize" ValueChanged="HandlePageSizeChanged" Class="mt-4" Style="width: 150px;">
+            <MudSelectItem Value="10">10</MudSelectItem>
+            <MudSelectItem Value="15">15</MudSelectItem>
+            <MudSelectItem Value="20">20</MudSelectItem>
+        </MudSelect>
+        <MudGrid>
+            @foreach (var product in response!.Data!.Products)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Elevation="2" Class="d-flex flex-column" Style="height: 450px;">
+                        <MudCardMedia Image="@product.Image" Height="200" Style="object-fit: cover;" />
+                        <MudCardContent Class="flex-grow-1 d-flex flex-column" Style="min-height: 200px;">
+                            <MudText Typo="Typo.h6">@product.Name</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">@product.Category.Name</MudText>
+                            <MudText Typo="Typo.body1" Class="mt-2" Style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis;">
+                                @(product.Description.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)
+                            </MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Primary" Class="mt-2">
+                                @product.Price.ToString("C")
+                            </MudText>
+                            <MudText Typo="Typo.caption" Color="@(product.QuantityInStock > 0 ? Color.Success : Color.Error)">
+                                @(product.QuantityInStock > 0 ? $"{product.QuantityInStock} in stock" : "Out of stock")
+                            </MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text"
+                                       Color="Color.Primary"
+                                       Disabled="@(product.QuantityInStock == 0)"
+                                       OnClick="@(() => AddToCart(product))">
+                                Add to Cart
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+        <hr />
+        <MudPaper Elevation="0" Class="d-flex justify-center mt-6">
+            <MudPagination Count="@(response?.TotalPages ?? 1)"
+                           Selected="@InputModel.PageNumber"
+                           SelectedChanged="HandlePageChanged"
+                           Disabled="@IsLoading"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Rectangular="true" />
+        </MudPaper>
+        <br />
+    }
+</MudContainer>

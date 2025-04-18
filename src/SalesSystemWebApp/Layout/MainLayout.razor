@@ -1,4 +1,5 @@
-﻿@using SalesSystemWebApp.Security
+﻿@using SalesSystemWebApp.Components
+@using SalesSystemWebApp.Security
 @inherits LayoutComponentBase
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
@@ -7,15 +8,40 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="1">
-        <MudText Typo="Typo.h5" Class="ml-3">Sales System</MudText>
+    <MudAppBar>
+        <MudButton Variant="Variant.Text" Href="/" Class="mx-2">
+            Home
+        </MudButton>
+
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+
+        <CartIcon class="mr-4" />
+
+        <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" ActivationEvent="@MouseEvent.LeftClick">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.ManageAccounts">Account</MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                @if (!IsAuthenticated)
+                {
+                    <MudNavLink Icon="@Icons.Material.TwoTone.Login" Href="/sign-in">Sign In</MudNavLink>
+                    <MudNavLink Icon="@Icons.Material.TwoTone.AppRegistration" Href="/sign-up">Sign Up</MudNavLink>
+                }
+                else
+                {
+                    <MudButton Icon="@Icons.Material.TwoTone.Logout" Variant="Variant.Text" Color="Color.Error" OnClick="Logout">Logout</MudButton>
+                }
+            </ChildContent>
+        </MudMenu>
     </MudAppBar>
+
     <MudMainContent>
-        @*Body*@
+        <MudContainer Class="mt-4">
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
+
 
 @code
 {

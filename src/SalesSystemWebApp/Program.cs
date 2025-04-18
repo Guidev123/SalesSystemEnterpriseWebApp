@@ -4,7 +4,9 @@ using SalesSystemWebApp;
 using SalesSystemWebApp.Configurations;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.Services.AddDependencies();
+WebConfiguration.BackendUrl = builder.Configuration.GetValue<string>("BackendUrl") ?? string.Empty;
+
+builder.Services.AddDependencies(builder.Configuration);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 

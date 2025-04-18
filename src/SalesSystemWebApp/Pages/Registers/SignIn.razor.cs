@@ -4,7 +4,7 @@ using SalesSystemWebApp.Security;
 using SalesSystemWebApp.Services.Register;
 using SalesSystemWebApp.ViewModels;
 
-namespace SalesSystemWebApp.Pages.Register
+namespace SalesSystemWebApp.Pages.Registers
 {
     public partial class SignInPage : ComponentBase
     {
@@ -18,7 +18,7 @@ namespace SalesSystemWebApp.Pages.Register
         public ISnackbar Snackbar { get; set; } = default!;
 
         [Inject]
-        public IRegisterService UserService { get; set; } = default!;
+        public IRegistersService UserService { get; set; } = default!;
 
         public LoginViewModel InputModel { get; set; } = new();
 
@@ -40,6 +40,12 @@ namespace SalesSystemWebApp.Pages.Register
             try
             {
                 var result = await UserService.LoginAsync(InputModel);
+                if(result is null)
+                {
+                    Snackbar.Add("Something has failed", Severity.Error);
+                    return;
+                }
+
                 if (result.IsSuccess)
                 {
                     await JwtAuthenticationStateProvider.SetTokenAsync(result.Data!.AccessToken);

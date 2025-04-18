@@ -20,9 +20,5 @@ namespace SalesSystemWebApp.Services
 
             return JsonSerializer.Deserialize<T>(json, options);
         }
-
-        protected static bool OpertationIsValid(HttpResponseMessage response)
-            => response.EnsureSuccessStatusCode().IsSuccessStatusCode;
-
     }
 }
