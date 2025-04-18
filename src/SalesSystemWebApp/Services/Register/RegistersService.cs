@@ -22,18 +22,18 @@ namespace SalesSystemWebApp.Services.Register
             return await DeserializeObjectResponse<ResponseViewModel<UserViewModel?>>(response);
         }
 
-        public async Task<ResponseViewModel<LoginResponseViewModel?>?> SignInAsync(SignInViewModel login)
+        public async Task<ResponseViewModel<UserSessionViewModel?>?> SignInAsync(SignInViewModel login)
         {
             var response = await _client.PostAsync("/api/v1/registers/signin", GetContent(login)).ConfigureAwait(false);
 
-            return await DeserializeObjectResponse<ResponseViewModel<LoginResponseViewModel?>>(response);
+            return await DeserializeObjectResponse<ResponseViewModel<UserSessionViewModel?>>(response);
         }
 
-        public async Task<ResponseViewModel<LoginResponseViewModel?>?> SignUpAsync(SignUpViewModel register)
+        public async Task<ResponseViewModel<UserSessionViewModel?>?> SignUpAsync(SignUpViewModel register)
         {
             var response = await _client.PostAsync("/api/v1/registers", GetContent(register)).ConfigureAwait(false);
 
-            return await DeserializeObjectResponse<ResponseViewModel<LoginResponseViewModel?>>(response);
+            return await DeserializeObjectResponse<ResponseViewModel<UserSessionViewModel?>>(response);
         }
     }
 }

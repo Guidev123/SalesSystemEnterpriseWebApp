@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using SalesSystemWebApp.Security.Token;
 using System.Net;
 
 namespace SalesSystemWebApp.Security
 {
     public class UnauthorizedResponseHandler(NavigationManager navigation,
                                              ISnackbar snackbar,
-                                             ITokenService tokenService) : DelegatingHandler
+                                             ISessionStorageService sessionStorageService) : DelegatingHandler
     {
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -16,7 +16,7 @@ namespace SalesSystemWebApp.Security
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                await tokenService.RemoveToken();
+                await sessionStorageService.RemoveItemAsync("UserSession", default);
                 navigation.NavigateTo("/sign-in", forceLoad: true);
                 snackbar.Add("Session expired, please login again.", Severity.Warning);
             }

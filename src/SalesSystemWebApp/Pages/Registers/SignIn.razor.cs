@@ -9,7 +9,7 @@ namespace SalesSystemWebApp.Pages.Registers
     public partial class SignInPage : ComponentBase
     {
         [Inject]
-        public IJwtAuthenticationStateProvider JwtAuthenticationStateProvider { get; set; } = default!;
+        public ICustomAuthenticationStateProvider CustomAuthenticationStateProvider { get; set; } = default!;
 
         [Inject]
         public NavigationManager NavigationManager { get; set; } = default!;
@@ -26,7 +26,7 @@ namespace SalesSystemWebApp.Pages.Registers
 
         protected override async Task OnInitializedAsync()
         {
-            var authState = await JwtAuthenticationStateProvider.GetAuthenticationStateAsync();
+            var authState = await CustomAuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
             if (user.Identity is not null && user.Identity.IsAuthenticated)
@@ -48,7 +48,7 @@ namespace SalesSystemWebApp.Pages.Registers
 
                 if (result.IsSuccess)
                 {
-                    await JwtAuthenticationStateProvider.SetTokenAsync(result.Data!.AccessToken);
+                    await CustomAuthenticationStateProvider.UpdateAuthenticationState(result.Data);
                     NavigationManager.NavigateTo("/");
                     Snackbar.Add("Welcome!", Severity.Success);
                 }

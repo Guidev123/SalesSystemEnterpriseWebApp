@@ -15,8 +15,9 @@
         </MudButton>
 
         <MudSpacer />
-
-        <CartIcon class="mr-4" />
+        <AuthorizeView>
+            <CartIcon class="mr-4" />
+        </AuthorizeView>
 
         <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" ActivationEvent="@MouseEvent.LeftClick">
             <ActivatorContent>
@@ -47,7 +48,7 @@
 @code
 {
     [Inject]
-    public IJwtAuthenticationStateProvider JwtAuthenticationStateProvider { get; set; } = default!;
+    public ICustomAuthenticationStateProvider CustomAuthenticationStateProvider { get; set; } = default!;
 
     [Inject]
     public NavigationManager Navigation { get; set; } = default!;
@@ -65,7 +66,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        IsAuthenticated = await JwtAuthenticationStateProvider.CheckAuthenticatedAsync();
+        var authenticationState = await CustomAuthenticationStateProvider.GetAuthenticationStateAsync();
+        IsAuthenticated = authenticationState?.User?.Identity?.IsAuthenticated ?? false;
     }
 
     private void ToggleDrawer()
@@ -75,7 +77,7 @@
 
     private async Task Logout()
     {
-        await JwtAuthenticationStateProvider.RemoveTokenAsync();
+        await CustomAuthenticationStateProvider.UpdateAuthenticationState(null);
         IsAuthenticated = false;
         CartService.NotifyCartChanged();
 

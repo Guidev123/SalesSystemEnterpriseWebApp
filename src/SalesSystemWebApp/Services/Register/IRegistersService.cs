@@ -5,8 +5,8 @@ namespace SalesSystemWebApp.Services.Register
 {
     public interface IRegistersService
     {
-        Task<ResponseViewModel<LoginResponseViewModel?>?> SignInAsync(SignInViewModel login);
-        Task<ResponseViewModel<LoginResponseViewModel?>?> SignUpAsync(SignUpViewModel register);
+        Task<ResponseViewModel<UserSessionViewModel?>?> SignInAsync(SignInViewModel login);
+        Task<ResponseViewModel<UserSessionViewModel?>?> SignUpAsync(SignUpViewModel register);
         Task<ResponseViewModel<UserViewModel?>?> GetAsync();
         Task<ResponseViewModel<string?>?> AddAddressAsync(AddressViewModel address);
     }

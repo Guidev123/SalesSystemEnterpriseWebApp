@@ -7,7 +7,7 @@ namespace SalesSystemWebApp.Components
     public partial class CartIcon : ComponentBase
     {
         [Inject]
-        public IJwtAuthenticationStateProvider JwtAuthenticationStateProvider { get; set; } = default!;
+        public ICustomAuthenticationStateProvider CustomAuthenticationStateProvider { get; set; } = default!;
 
         [Inject]
         public ICartService CartStateService { get; set; } = default!;
@@ -23,20 +23,20 @@ namespace SalesSystemWebApp.Components
 
         protected override async Task OnInitializedAsync()
         {
-            IsAuthenticated = await JwtAuthenticationStateProvider.CheckAuthenticatedAsync();
+            var authenticationState = await CustomAuthenticationStateProvider.GetAuthenticationStateAsync();
+            IsAuthenticated = authenticationState?.User?.Identity?.IsAuthenticated ?? false;
+            if (!IsAuthenticated)
+            {
+                CartItemCount = 0;
+                return;
+            }
+
             await LoadCartItemCountAsync();
             CartStateService.OnCartChanged += async () => await LoadCartItemCountAsync();
         }
 
         public async Task LoadCartItemCountAsync()
         {
-            if (!IsAuthenticated)
-            {
-                CartItemCount = 0;
-                await InvokeAsync(StateHasChanged);
-                return;
-            }
-
             try
             {
                 var response = await SalesService.GetCartAsync();

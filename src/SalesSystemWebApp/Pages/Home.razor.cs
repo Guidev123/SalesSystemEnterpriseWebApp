@@ -5,6 +5,7 @@ using SalesSystemWebApp.Services.Catalog;
 using SalesSystemWebApp.Services.Sales;
 using SalesSystemWebApp.ViewModels;
 using SalesSystemWebApp.ViewModels.Catalog;
+using SalesSystemWebApp.ViewModels.Sales;
 
 namespace SalesSystemWebApp.Pages
 {
