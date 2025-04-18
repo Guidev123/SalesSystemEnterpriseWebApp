@@ -1,28 +1,75 @@
 ﻿using Blazored.SessionStorage;
-using System.Text.Json;
+using Microsoft.JSInterop;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace SalesSystemWebApp.Extensions
 {
     public static class SessionStorageServiceExtension
     {
-        public static async Task SaveItemEncryptedAsync<T>(this ISessionStorageService sessionStorageService, string key, T item)
+        private static readonly string KeyBase64; 
+
+        static SessionStorageServiceExtension()
         {
-            var itemJson = JsonSerializer.Serialize(item);
-            var itemJsonBytes = Encoding.UTF8.GetBytes(itemJson);
-            var base64Json = Convert.ToBase64String(itemJsonBytes);
-            await sessionStorageService.SetItemAsync(key, base64Json);
+            var keyBytes = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(keyBytes);
+            }
+            KeyBase64 = Convert.ToBase64String(keyBytes);
         }
 
-        public static async Task<T> ReadEncryptedItemAsync<T>(this ISessionStorageService sessionStorageService, string key)
+        public static async Task SaveItemEncryptedAsync<T>(this ISessionStorageService sessionStorageService, string key, T item, IJSRuntime jsRuntime)
         {
-            var base64Json = await sessionStorageService.GetItemAsync<string>(key);
-            if(string.IsNullOrEmpty(base64Json)) return default!;
+            if (sessionStorageService == null)
+                throw new ArgumentNullException(nameof(sessionStorageService));
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException(nameof(key));
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+            if (jsRuntime == null)
+                throw new ArgumentNullException(nameof(jsRuntime));
 
-            var itemJsonBytes = Convert.FromBase64String(base64Json);
-            var itemJson = Encoding.UTF8.GetString(itemJsonBytes);
-            var item = JsonSerializer.Deserialize<T>(itemJson);
-            return item ?? default!;
+            try
+            {
+                var itemJson = JsonSerializer.Serialize(item);
+
+                var encryptedBase64 = await jsRuntime.InvokeAsync<string>("encryptData", itemJson, KeyBase64);
+
+                await sessionStorageService.SetItemAsync(key, encryptedBase64);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to encrypt and save item.", ex);
+            }
+        }
+
+        public static async Task<T?> ReadEncryptedItemAsync<T>(this ISessionStorageService sessionStorageService, string key, IJSRuntime jsRuntime)
+        {
+            if (sessionStorageService == null)
+                throw new ArgumentNullException(nameof(sessionStorageService));
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException(nameof(key));
+            if (jsRuntime == null)
+                throw new ArgumentNullException(nameof(jsRuntime));
+
+            try
+            {
+                var encryptedBase64 = await sessionStorageService.GetItemAsync<string>(key);
+                if (string.IsNullOrEmpty(encryptedBase64))
+                {
+                    return default;
+                }
+
+                var decryptedJson = await jsRuntime.InvokeAsync<string>("decryptData", encryptedBase64, KeyBase64);
+
+                return JsonSerializer.Deserialize<T>(decryptedJson);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to read and decrypt item.", ex);
+            }
         }
     }
 }

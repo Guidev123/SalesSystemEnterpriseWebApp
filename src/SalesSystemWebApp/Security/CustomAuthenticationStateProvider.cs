@@ -1,21 +1,21 @@
 ﻿using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using SalesSystemWebApp.Extensions;
 using SalesSystemWebApp.ViewModels.Registers;
 using System.Security.Claims;
 
 namespace SalesSystemWebApp.Security
 {
-    public class CustomAuthenticationStateProvider(ISessionStorageService sessionStorage) : AuthenticationStateProvider, ICustomAuthenticationStateProvider
+    public class CustomAuthenticationStateProvider(ISessionStorageService sessionStorage, IJSRuntime jSRuntime) : AuthenticationStateProvider, ICustomAuthenticationStateProvider
     {
-        private readonly ISessionStorageService _sessionStorage = sessionStorage ?? throw new ArgumentNullException(nameof(sessionStorage));
         private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             try
             {
-                var userSession = await _sessionStorage.ReadEncryptedItemAsync<UserSessionViewModel>("UserSession");
+                var userSession = await sessionStorage.ReadEncryptedItemAsync<UserSessionViewModel>("UserSession", jSRuntime);
                 if (userSession is null || userSession.UserToken is null || string.IsNullOrEmpty(userSession.UserToken.Email))
                 {
                     return new AuthenticationState(_anonymous);
@@ -23,7 +23,7 @@ namespace SalesSystemWebApp.Security
 
                 if (userSession.ExpiryTimeStamp <= DateTime.Now)
                 {
-                    await _sessionStorage.RemoveItemAsync("UserSession");
+                    await sessionStorage.RemoveItemAsync("UserSession");
                     return new AuthenticationState(_anonymous);
                 }
 
@@ -43,7 +43,7 @@ namespace SalesSystemWebApp.Security
 
                 return new AuthenticationState(principal);
             }
-            catch (Exception ex)
+            catch 
             {
                 return new AuthenticationState(_anonymous);
             }
@@ -71,12 +71,12 @@ namespace SalesSystemWebApp.Security
                     claimsPrincipal = new ClaimsPrincipal(identity);
 
                     userSession.ExpiryTimeStamp = DateTime.Now.AddSeconds(userSession.ExpiresIn);
-                    await _sessionStorage.SaveItemEncryptedAsync("UserSession", userSession);
+                    await sessionStorage.SaveItemEncryptedAsync("UserSession", userSession, jSRuntime);
                 }
                 else
                 {
                     claimsPrincipal = _anonymous;
-                    await _sessionStorage.RemoveItemAsync("UserSession");
+                    await sessionStorage.RemoveItemAsync("UserSession");
                 }
 
                 NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
@@ -91,15 +91,14 @@ namespace SalesSystemWebApp.Security
         {
             try
             {
-                var userSession = await _sessionStorage.ReadEncryptedItemAsync<UserSessionViewModel>("UserSession");
-                if (userSession != null && userSession.ExpiryTimeStamp > DateTime.Now)
+                var userSession = await sessionStorage.ReadEncryptedItemAsync<UserSessionViewModel>("UserSession", jSRuntime);
+                if (userSession is not null && userSession.ExpiryTimeStamp > DateTime.Now)
                 {
                     return userSession.AccessToken;
                 }
             }
             catch
-            {
-            }
+            {   }
 
             return string.Empty;
         }
