@@ -1,4 +1,4 @@
-﻿namespace SalesSystemWebApp.ViewModels
+﻿namespace SalesSystemWebApp.ViewModels.Registers
 {
     public record UserViewModel
     {

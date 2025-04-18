@@ -2,7 +2,7 @@
 using MudBlazor;
 using SalesSystemWebApp.Security;
 using SalesSystemWebApp.Services.Register;
-using SalesSystemWebApp.ViewModels;
+using SalesSystemWebApp.ViewModels.Registers;
 
 namespace SalesSystemWebApp.Pages.Registers
 {
@@ -20,7 +20,7 @@ namespace SalesSystemWebApp.Pages.Registers
         [Inject]
         public IRegistersService UserService { get; set; } = default!;
 
-        public LoginViewModel InputModel { get; set; } = new();
+        public SignInViewModel InputModel { get; set; } = new();
 
         public bool IsBusy { get; set; } = false;
 
@@ -39,7 +39,7 @@ namespace SalesSystemWebApp.Pages.Registers
 
             try
             {
-                var result = await UserService.LoginAsync(InputModel);
+                var result = await UserService.SignInAsync(InputModel);
                 if(result is null)
                 {
                     Snackbar.Add("Something has failed", Severity.Error);

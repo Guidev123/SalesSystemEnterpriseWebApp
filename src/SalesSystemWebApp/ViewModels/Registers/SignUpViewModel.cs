@@ -1,9 +1,9 @@
 ﻿using SalesSystemWebApp.ViewModels.Validators;
 using System.ComponentModel.DataAnnotations;
 
-namespace SalesSystemWebApp.ViewModels
+namespace SalesSystemWebApp.ViewModels.Registers
 {
-    public record RegisterViewModel
+    public record SignUpViewModel
     {
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(50, ErrorMessage = "Name cannot be longer than 50 characters.")]

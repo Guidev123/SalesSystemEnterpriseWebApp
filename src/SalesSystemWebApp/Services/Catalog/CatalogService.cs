@@ -1,4 +1,5 @@
 ﻿using SalesSystemWebApp.ViewModels;
+using SalesSystemWebApp.ViewModels.Catalog;
 
 namespace SalesSystemWebApp.Services.Catalog
 {

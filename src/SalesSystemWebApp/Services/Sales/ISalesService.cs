@@ -1,5 +1,5 @@
 ﻿using SalesSystemWebApp.ViewModels;
-using static SalesSystemWebApp.Services.Sales.SalesService;
+using SalesSystemWebApp.ViewModels.Sales;
 
 namespace SalesSystemWebApp.Services.Sales
 {
@@ -7,5 +7,6 @@ namespace SalesSystemWebApp.Services.Sales
     {
         Task<ResponseViewModel<CreatedOrderItemViewModel?>?> AddOrderItemAsync(OrderItemViewModel orderItem);
         Task<ResponseViewModel<CartViewModel?>?> GetCartAsync();
+        Task<ResponseViewModel<StartOrderResponseViewModel?>?> StartOrderAsync(CartItemViewModel cartItemViewModel);
     }
 }

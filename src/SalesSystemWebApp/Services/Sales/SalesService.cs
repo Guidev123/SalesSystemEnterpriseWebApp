@@ -1,4 +1,5 @@
 ﻿using SalesSystemWebApp.ViewModels;
+using SalesSystemWebApp.ViewModels.Sales;
 
 namespace SalesSystemWebApp.Services.Sales
 {
@@ -21,5 +22,11 @@ namespace SalesSystemWebApp.Services.Sales
             return await DeserializeObjectResponse<ResponseViewModel<CartViewModel?>?>(response).ConfigureAwait(false);
         }
 
+        public async Task<ResponseViewModel<StartOrderResponseViewModel?>?> StartOrderAsync(CartItemViewModel cartItemViewModel)
+        {
+            var response = await _client.GetAsync("/api/v1/sales/order").ConfigureAwait(false);
+
+            return await DeserializeObjectResponse<ResponseViewModel<StartOrderResponseViewModel?>?>(response).ConfigureAwait(false);
+        }
     }
 }

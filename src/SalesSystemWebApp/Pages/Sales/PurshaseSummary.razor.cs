@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SalesSystemWebApp.Services.Sales;
-using SalesSystemWebApp.ViewModels;
+using SalesSystemWebApp.ViewModels.Sales;
 
 namespace SalesSystemWebApp.Pages.Sales
 {
@@ -16,7 +16,7 @@ namespace SalesSystemWebApp.Pages.Sales
         [Inject]
         public ISalesService SalesService { get; set; } = default!;
 
-        public CartViewModel? cart;
+        public CartViewModel? Cart;
         public bool IsLoading = true;
         public string? ErrorMessage;
 
@@ -36,7 +36,7 @@ namespace SalesSystemWebApp.Pages.Sales
 
                 if (response?.IsSuccess is true && response.Data is not null)
                 {
-                    cart = response.Data;
+                    Cart = response.Data;
                 }
                 else
                 {

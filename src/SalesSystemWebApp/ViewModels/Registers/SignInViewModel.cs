@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SalesSystemWebApp.ViewModels
+namespace SalesSystemWebApp.ViewModels.Registers
 {
-    public record LoginViewModel
+    public record SignInViewModel
     {
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]

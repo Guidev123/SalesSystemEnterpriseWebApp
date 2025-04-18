@@ -2,6 +2,7 @@
 using SalesSystemWebApp.Security.Token;
 using SalesSystemWebApp.Services.Register;
 using SalesSystemWebApp.ViewModels;
+using SalesSystemWebApp.ViewModels.Registers;
 using System.Security.Claims;
 
 namespace SalesSystemWebApp.Security

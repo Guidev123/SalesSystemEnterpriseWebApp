@@ -1,5 +1,6 @@
 ﻿@using SalesSystemWebApp.Components
 @using SalesSystemWebApp.Security
+@using SalesSystemWebApp.Services.Sales
 @inherits LayoutComponentBase
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
@@ -52,6 +53,9 @@
     public NavigationManager Navigation { get; set; } = default!;
 
     [Inject]
+    public ICartService CartService { get; set; } = default!;
+
+    [Inject]
     public ISnackbar Snackbar { get; set; } = default!;
 
     private bool _isDrawerOpened = true;
@@ -73,7 +77,8 @@
     {
         await JwtAuthenticationStateProvider.RemoveTokenAsync();
         IsAuthenticated = false;
-        StateHasChanged();
+        CartService.NotifyCartChanged();
+
         Snackbar.Add("You have successfully disconnected.", Severity.Info);
         Navigation.NavigateTo("/");
     }

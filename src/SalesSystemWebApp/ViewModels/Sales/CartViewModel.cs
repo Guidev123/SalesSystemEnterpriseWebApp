@@ -1,4 +1,4 @@
-﻿namespace SalesSystemWebApp.ViewModels
+﻿namespace SalesSystemWebApp.ViewModels.Sales
 {
     public record CartViewModel(
         Guid OrderId,

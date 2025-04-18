@@ -5,6 +5,7 @@
 
 <PageTitle>Order Summary</PageTitle>
 
+
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
     <MudText Typo="Typo.h4" GutterBottom="true">Order Summary</MudText>
 
@@ -23,14 +24,14 @@
     {
         <MudAlert Severity="Severity.Error" Class="my-4">@ErrorMessage</MudAlert>
     }
-    else if (cart?.Items?.Any() != true)
+    else if (Cart?.Items?.Any() != true)
     {
         <MudAlert Severity="Severity.Info" Class="my-4">Your cart is empty.</MudAlert>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/">Shop Now</MudButton>
     }
     else
     {
-        <MudTable Items="@cart!.Items" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="2" Class="mt-4">
+        <MudTable Items="@Cart!.Items" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="2" Class="mt-4">
             <HeaderContent>
                 <MudTh>Product</MudTh>
                 <MudTh>Price</MudTh>
@@ -49,16 +50,16 @@
             <MudText Typo="Typo.h6">Order Summary</MudText>
             <MudDivider Class="my-2" />
             <MudText Typo="Typo.body1">
-                Subtotal: <strong>@cart!.SubTotal.ToString("C")</strong>
+                Subtotal: <strong>@Cart!.SubTotal.ToString("C")</strong>
             </MudText>
-            @if (cart!.TotalDiscount > 0)
+            @if (Cart!.TotalDiscount > 0)
             {
                 <MudText Typo="Typo.body1">
-                    Discount (@cart!.VoucherCode): <strong>-@cart!.TotalDiscount.ToString("C")</strong>
+                    Discount (@Cart!.VoucherCode): <strong>-@Cart!.TotalDiscount.ToString("C")</strong>
                 </MudText>
             }
             <MudText Typo="Typo.h5" Class="mt-2">
-                Total: <strong>@cart!.TotalPrice.ToString("C")</strong>
+                Total: <strong>@Cart!.TotalPrice.ToString("C")</strong>
             </MudText>
         </MudPaper>
     }
