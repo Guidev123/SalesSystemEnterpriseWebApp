@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SalesSystem.UI.Client\SalesSystem.UI.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.*" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.8.0" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,15 @@
 using MudBlazor.Services;
 using SalesSystem.UI.Components;
+using SalesSystem.UI.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMudServices();
+
+builder.Services.AddAuthentication();
+builder.Services.AddCascadingAuthenticationState();
+
+builder.AddWebConfiguration();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
@@ -31,5 +37,8 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(SalesSystem.UI.Client._Imports).Assembly);
+
+app.UseAuthentication();
+app.UseAuthorization(); 
 
 app.Run();

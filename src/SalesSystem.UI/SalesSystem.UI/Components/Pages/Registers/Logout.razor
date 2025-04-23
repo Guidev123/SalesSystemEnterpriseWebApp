@@ -1,0 +1,12 @@
+﻿@page "/logout"
+@using SalesSystem.UI.Authentication
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLogout();
+        NavigationManager.NavigateTo("/sign-in");
+    }
+}
