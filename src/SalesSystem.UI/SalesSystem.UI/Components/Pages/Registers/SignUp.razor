@@ -1,0 +1,51 @@
+﻿@page "/sign-up"
+@inherits SignUpPage
+@layout HeadlessLayout
+
+<PageTitle>Sales System - Sign Up</PageTitle>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="12" md="8" lg="6" xl="6" xxl="6">
+        <MudPaper Class="mud-width-full pa-8">
+            <h1 class="d-flex justify-center">Sales System - Sign Up</h1>
+
+            <EditForm Model="@InputModel" OnValidSubmit="OnValidSubmitAsync">
+                <ValidationSummary />
+                <DataAnnotationsValidator />
+
+                <MudTextField Class="mb-4" Variant="Variant.Outlined" T="string" Label="Name" HelperText="Required Field" InputType="InputType.Text" For="@(() => InputModel.Name)" @bind-Value="InputModel.Name" />
+                <MudTextField Class="mb-4" Variant="Variant.Outlined" T="string" Label="E-mail" HelperText="Required Field" InputType="InputType.Email" For="@(() => InputModel.Email)" @bind-Value="InputModel.Email" />
+
+                <MudTextField Class="mb-4"
+                              Variant="Variant.Outlined"
+                              T="string"
+                              Label="Document"
+                              HelperText="Required Field"
+                              InputType="InputType.Text"
+                              For="@(() => InputModel.Document)"
+                              @bind-Value="InputModel.Document"
+                              Mask="@(new PatternMask("00000000000"))" />
+
+
+                <MudDatePicker Class="mb-4" Label="Birth Date" @bind-Date="@InputModel.BirthDate" Format="dd/MM/yyyy" Variant="Variant.Outlined" />
+
+                <MudTextField Class="mb-4" Variant="Variant.Outlined" T="string" Label="Password" HelperText="Required Field" InputType="InputType.Password" For="@(() => InputModel.Password)" @bind-Value="InputModel.Password" />
+                <MudTextField Class="mb-4" Variant="Variant.Outlined" T="string" Label="Confirm Password" HelperText="Required Field" InputType="InputType.Password" For="@(() => InputModel.ConfirmPassword)" @bind-Value="InputModel.ConfirmPassword" />
+
+                <div class="d-flex mt-8">
+                    @if (IsBusy)
+                    {
+                        <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Sign Up</MudButton>
+                        <MudSpacer />
+                        <MudButton Href="/sign-in" Variant="Variant.Outlined" EndIcon="@Icons.Material.Sharp.AccessibilityNew" Color="Color.Primary">Already a member?</MudButton>
+                    }
+                </div>
+            </EditForm>
+
+        </MudPaper>
+    </MudItem>
+</MudGrid>
