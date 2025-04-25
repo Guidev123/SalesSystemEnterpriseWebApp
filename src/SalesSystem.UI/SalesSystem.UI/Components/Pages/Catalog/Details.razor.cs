@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using SalesSystem.UI.Authentication;
 using SalesSystem.UI.Services.Interfaces;
 using SalesSystem.UI.ViewModels;
 
@@ -23,8 +24,8 @@ namespace SalesSystem.UI.Components.Pages.Catalog
         [Inject]
         private NavigationManager NavigationManager { get; set; } = default!;
 
-        [CascadingParameter]
-        private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+        [Inject]
+        private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
         public ResponseViewModel<ProductDetailsViewModel?>? Response;
         public bool IsLoading = true;
@@ -55,7 +56,7 @@ namespace SalesSystem.UI.Components.Pages.Catalog
 
         public async Task AddToCart()
         {
-            var authState = await AuthenticationStateTask;
+            var authState = await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
             if (!authState.User.Identity?.IsAuthenticated ?? false)
             {
                 NavigationManager.NavigateTo("sign-in");

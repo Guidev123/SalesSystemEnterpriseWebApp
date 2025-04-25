@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using SalesSystem.UI.Services.Interfaces;
 using SalesSystem.UI.ViewModels;
 
@@ -8,6 +9,9 @@ namespace SalesSystem.UI.Components.Pages.Sales
     {
         [Inject]
         private ISalesService SalesService { get; set; } = default!;
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; } = default!;
 
         [Inject]
         private NavigationManager NavigationManager { get; set; } = default!;
@@ -30,6 +34,7 @@ namespace SalesSystem.UI.Components.Pages.Sales
             catch (Exception)
             {
                 NavigationManager.NavigateTo("/error");
+                Snackbar.Add("Something has failed during your Cart loading, try again later.", Severity.Error);
             }
             finally
             {
