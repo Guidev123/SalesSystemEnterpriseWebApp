@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SalesSystem.UI.Services.Interfaces;
-using SalesSystem.UI.ViewModels;
+using SalesSystem.UI.ViewModels.Responses;
+using SalesSystem.UI.ViewModels.Sales;
 
 namespace SalesSystem.UI.Components.Pages.Sales
 {
@@ -20,6 +21,9 @@ namespace SalesSystem.UI.Components.Pages.Sales
         public bool IsLoading = true;
         public Dictionary<Guid, int> Quantities = [];
         public Dictionary<Guid, bool> IsUpdating = [];
+        public string VoucherCode { get; set; } = string.Empty;
+        public bool IsApplyingVoucher { get; set; }
+        public static event Action? OnCartChanged;
 
         protected override async Task OnInitializedAsync()
         {
@@ -74,6 +78,7 @@ namespace SalesSystem.UI.Components.Pages.Sales
                 {
                     await LoadCartSummaryAsync();
                     Snackbar.Add("Quantity updated successfully!", Severity.Success);
+                    OnCartChanged?.Invoke();
                 }
                 else
                 {
@@ -103,6 +108,7 @@ namespace SalesSystem.UI.Components.Pages.Sales
                 {
                     await LoadCartSummaryAsync();
                     Snackbar.Add("Item removed from cart successfully!", Severity.Success);
+                    OnCartChanged?.Invoke();
                 }
                 else
                 {
@@ -116,6 +122,45 @@ namespace SalesSystem.UI.Components.Pages.Sales
             finally
             {
                 IsUpdating[productId] = false;
+                StateHasChanged();
+            }
+        }
+
+        public async Task ApplyVoucher()
+        {
+            if (string.IsNullOrWhiteSpace(VoucherCode)) return;
+            if (!string.IsNullOrEmpty(Response?.Data?.VoucherCode))
+            {
+                Snackbar.Add("A voucher is already applied. Remove it to apply a new one.", Severity.Warning);
+                return;
+            }
+
+            IsApplyingVoucher = true;
+            StateHasChanged();
+
+            try
+            {
+                var voucherModel = new VoucherViewModel(VoucherCode);
+                var result = await SalesService.ApplyVoucherAsync(voucherModel);
+                if (result?.IsSuccess == true)
+                {
+                    await LoadCartSummaryAsync();
+                    Snackbar.Add("Voucher applied successfully!", Severity.Success);
+                    VoucherCode = string.Empty;
+                    OnCartChanged?.Invoke();
+                }
+                else
+                {
+                    Snackbar.Add("Failed to apply voucher. Please check the code.", Severity.Error);
+                }
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("An error occurred while applying the voucher.", Severity.Error);
+            }
+            finally
+            {
+                IsApplyingVoucher = false;
                 StateHasChanged();
             }
         }

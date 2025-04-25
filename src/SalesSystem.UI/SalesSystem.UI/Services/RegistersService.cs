@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using SalesSystem.UI.Services.Interfaces;
 using SalesSystem.UI.ViewModels;
+using SalesSystem.UI.ViewModels.Responses;
 
 namespace SalesSystem.UI.Services
 {

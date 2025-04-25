@@ -1,0 +1,56 @@
+﻿@using SalesSystem.UI.Components.Pages.Sales
+@using SalesSystem.UI.Services.Interfaces
+@inject ISalesService SalesService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudBadge Content="@TotalQuantity" Color="Color.Primary" Overlap="true" Class="mud-width-small">
+    <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Inherit" OnClick="NavigateToCart" />
+</MudBadge>
+
+@code {
+    private int TotalQuantity { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCartSummaryAsync();
+        CartPage.OnCartChanged += RefreshCart;
+    }
+
+    private async Task LoadCartSummaryAsync()
+    {
+        try
+        {
+            var response = await SalesService.GetOrderSummaryAsync();
+            if (response?.IsSuccess == true && response.Data != null)
+            {
+                TotalQuantity = response.Data.Items.Sum(item => item.Quantity);
+            }
+            else
+            {
+                TotalQuantity = 0;
+            }
+        }
+        catch (Exception)
+        {
+            TotalQuantity = 0;
+            Snackbar.Add("Failed to load cart summary.", Severity.Error);
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void NavigateToCart()
+    {
+        NavigationManager.NavigateTo("/cart");
+    }
+
+    private async void RefreshCart()
+    {
+        await LoadCartSummaryAsync();
+    }
+
+    public void Dispose()
+    {
+        CartPage.OnCartChanged -= RefreshCart;
+    }
+}

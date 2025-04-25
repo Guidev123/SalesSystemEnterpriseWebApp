@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using SalesSystem.UI.Services.Interfaces;
-using SalesSystem.UI.ViewModels;
+using SalesSystem.UI.ViewModels.Responses;
+using SalesSystem.UI.ViewModels.Sales;
 using System.Net;
 
 namespace SalesSystem.UI.Services
@@ -12,6 +13,16 @@ namespace SalesSystem.UI.Services
         {
             await SetTokenAsync(httpClient).ConfigureAwait(false);
             var response = await httpClient.PostAsync("api/v1/sales/cart/item", GetContent(orderItem)).ConfigureAwait(false);
+            return await DeserializeObjectResponse<ResponseViewModel?>(response).ConfigureAwait(false);
+        }
+
+        public async Task<ResponseViewModel?> ApplyVoucherAsync(VoucherViewModel voucher)
+        {
+            await SetTokenAsync(httpClient).ConfigureAwait(false);
+            var response = await httpClient.PostAsync("api/v1/sales/cart/apply-voucher", GetContent(voucher)).ConfigureAwait(false);
+            if (response.StatusCode == HttpStatusCode.NoContent)
+                return new(true, Array.Empty<string>(), null);
+
             return await DeserializeObjectResponse<ResponseViewModel?>(response).ConfigureAwait(false);
         }
 
@@ -28,6 +39,7 @@ namespace SalesSystem.UI.Services
             var response = await httpClient.DeleteAsync($"api/v1/sales/cart/item/{productId}").ConfigureAwait(false);
             if (response.StatusCode == HttpStatusCode.NoContent)
                 return new(true, Array.Empty<string>(), null);
+
             return await DeserializeObjectResponse<ResponseViewModel?>(response).ConfigureAwait(false);
         }
 

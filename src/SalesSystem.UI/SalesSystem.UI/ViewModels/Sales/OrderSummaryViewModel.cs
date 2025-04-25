@@ -1,4 +1,4 @@
-﻿namespace SalesSystem.UI.ViewModels
+﻿namespace SalesSystem.UI.ViewModels.Sales
 {
     public record OrderSummaryViewModel(Guid OrderId,
         decimal SubTotal,

@@ -1,4 +1,4 @@
-﻿namespace SalesSystem.UI.ViewModels
+﻿namespace SalesSystem.UI.ViewModels.Catalog
 {
     public record ProductDetailsViewModel(ProductViewModel Product);
 }

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using SalesSystem.UI.Authentication;
 using SalesSystem.UI.Services.Interfaces;
-using SalesSystem.UI.ViewModels;
+using SalesSystem.UI.ViewModels.Catalog;
+using SalesSystem.UI.ViewModels.Responses;
+using SalesSystem.UI.ViewModels.Sales;
 
 namespace SalesSystem.UI.Components.Pages.Catalog
 {
@@ -29,7 +31,7 @@ namespace SalesSystem.UI.Components.Pages.Catalog
 
         public ResponseViewModel<ProductDetailsViewModel?>? Response;
         public bool IsLoading = true;
-        public int Quantity = 1; 
+        public int Quantity = 1;
 
         protected override async Task OnInitializedAsync()
         {
@@ -79,7 +81,7 @@ namespace SalesSystem.UI.Components.Pages.Catalog
                 var result = await SalesService.AddOrderItemAsync(orderItem);
                 if (result?.IsSuccess == true)
                 {
-                    NavigationManager.NavigateTo("/cart");
+                    NavigationManager.NavigateTo("/cart", true);
                     Snackbar.Add("Item added to order!", Severity.Success);
                 }
                 else

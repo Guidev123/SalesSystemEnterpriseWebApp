@@ -53,23 +53,43 @@
 
                         <MudGrid Class="mt-4">
                             <MudItem xs="12" sm="6">
-                                <MudText Typo="Typo.body1"><b>Subtotal:</b> @($"${order.SubTotal:F2}")</MudText>
-                                <MudText Typo="Typo.body1"><b>Total Discount:</b> @($"${order.TotalDiscount:F2}")</MudText>
                                 @if (!string.IsNullOrEmpty(order.VoucherCode))
                                 {
-                                    <MudText Typo="Typo.body1"><b>Voucher:</b> @order.VoucherCode</MudText>
+                                    <MudText Typo="Typo.body1" Class="mb-3">
+                                        <b>Applied Voucher:</b> @order.VoucherCode
+                                    </MudText>
                                 }
+                                else
+                                {
+                                    <MudTextField @bind-Value="VoucherCode" Label="Voucher Code" Variant="Variant.Outlined" Class="mb-3" Disabled="@IsApplyingVoucher" />
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplyVoucher" Disabled="@(IsApplyingVoucher || string.IsNullOrWhiteSpace(VoucherCode))">
+                                        @if (IsApplyingVoucher)
+                                        {
+                                            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
+                                        }
+                                        else
+                                        {
+                                            <span>Apply Voucher</span>
+                                        }
+                                    </MudButton>
+                                }
+                                <MudText Typo="Typo.body1" Class="mt-3"><b>Subtotal:</b> @($"${order.SubTotal:F2}")</MudText>
+                                <MudText Typo="Typo.body1"><b>Total Discount:</b> @($"${order.TotalDiscount:F2}")</MudText>
                                 <MudText Typo="Typo.h6" Color="Color.Primary" Class="mt-2"><b>Total Price:</b> @($"${order.TotalPrice:F2}")</MudText>
                             </MudItem>
                             <MudItem xs="12" sm="6" Class="d-flex justify-end">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ContinueShopping">Continue Shopping</MudButton>
+                                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Sharp.ArrowCircleRight" Color="Color.Primary"
+                                           Style="height: 32px; padding: 4px 16px;"
+                                           OnClick="ContinueShopping">
+                                    Continue Shopping
+                                </MudButton>
                             </MudItem>
                         </MudGrid>
                     }
                     else
                     {
                         <MudAlert Severity="Severity.Info">Your cart is empty.</MudAlert>
-                        <MudItem xs="12" sm="6" class="mt-5">
+                        <MudItem xs="12" sm="6" Class="mt-5">
                             <MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary">Buy now!</MudButton>
                         </MudItem>
                     }

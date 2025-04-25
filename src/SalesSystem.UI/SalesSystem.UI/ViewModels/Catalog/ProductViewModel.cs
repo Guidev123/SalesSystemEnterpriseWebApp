@@ -1,4 +1,4 @@
-﻿namespace SalesSystem.UI.ViewModels
+﻿namespace SalesSystem.UI.ViewModels.Catalog
 {
     public record ProductViewModel(Guid Id, string Name, string Description, string Image,
         decimal Price, int QuantityInStock, decimal Height,

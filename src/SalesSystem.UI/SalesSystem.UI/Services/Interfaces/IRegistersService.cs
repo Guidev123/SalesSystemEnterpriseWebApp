@@ -1,4 +1,5 @@
 ﻿using SalesSystem.UI.ViewModels;
+using SalesSystem.UI.ViewModels.Responses;
 
 namespace SalesSystem.UI.Services.Interfaces
 {
