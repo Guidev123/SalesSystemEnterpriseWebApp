@@ -1,2 +1,59 @@
 ﻿@page "/cart"
 @inherits CartPage
+
+<PageTitle>Shopping Cart</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="my-4">
+    @if (IsLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="d-flex align-center justify-center" />
+    }
+    else if (Response?.IsSuccess == true && Response.Data != null)
+    {
+        var order = Response.Data;
+        <MudPaper Elevation="2" Class="pa-4">
+            <MudText Typo="Typo.h5" Class="mb-4">Shopping Cart</MudText>
+            @if (order.Items.Any())
+            {
+                <MudTable Items="@order.Items" Hover="true" Striped="true">
+                    <HeaderContent>
+                        <MudTh>Product</MudTh>
+                        <MudTh>Unit Price</MudTh>
+                        <MudTh>Quantity</MudTh>
+                        <MudTh>Total</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.ProductName</MudTd>
+                        <MudTd>@($"${context.UnitPrice:F2}")</MudTd>
+                        <MudTd>@context.Quantity</MudTd>
+                        <MudTd>@($"${context.TotalPrice:F2}")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+                <MudGrid Class="mt-4">
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.body1"><b>Subtotal:</b> @($"${order.SubTotal:F2}")</MudText>
+                        <MudText Typo="Typo.body1"><b>Total Discount:</b> @($"${order.TotalDiscount:F2}")</MudText>
+                        @if (!string.IsNullOrEmpty(order.VoucherCode))
+                        {
+                            <MudText Typo="Typo.body1"><b>Voucher:</b> @order.VoucherCode</MudText>
+                        }
+                        <MudText Typo="Typo.h6" Color="Color.Primary" Class="mt-2"><b>Total Price:</b> @($"${order.TotalPrice:F2}")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6" Class="d-flex justify-end">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ContinueShopping">Continue Shopping</MudButton>
+                    </MudItem>
+                </MudGrid>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Info">Your cart is empty.</MudAlert>
+            }
+        </MudPaper>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Error" Class="my-4">Unable to load cart. Please try again later.</MudAlert>
+    }
+</MudContainer>
+

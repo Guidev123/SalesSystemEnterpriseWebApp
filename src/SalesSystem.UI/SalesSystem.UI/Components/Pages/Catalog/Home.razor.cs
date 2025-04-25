@@ -2,7 +2,7 @@
 using SalesSystem.UI.Services.Interfaces;
 using SalesSystem.UI.ViewModels;
 
-namespace SalesSystem.UI.Components.Catalog
+namespace SalesSystem.UI.Components.Pages.Catalog
 {
     public partial class HomePage : ComponentBase
     {

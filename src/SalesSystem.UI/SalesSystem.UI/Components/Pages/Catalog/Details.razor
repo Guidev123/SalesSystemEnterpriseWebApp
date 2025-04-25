@@ -22,7 +22,8 @@
                     <MudText Typo="Typo.body1" Class="mb-2">@productResponse.Product.Description</MudText>
                     <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">@($"${productResponse.Product.Price:F2}")</MudText>
                     <MudText Typo="Typo.body2" Class="mb-1"><b>Stock:</b> @productResponse.Product.QuantityInStock units</MudText>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="GoBack">Back to Catalog</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4 mr-2" OnClick="AddToCart">Add to Cart</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mt-4" OnClick="GoBack">Back to Catalog</MudButton>
                 </MudItem>
             </MudGrid>
         </MudPaper>
