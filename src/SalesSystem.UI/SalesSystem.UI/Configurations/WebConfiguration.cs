@@ -27,6 +27,7 @@ namespace SalesSystem.UI.Configurations
         private static void AddHttpClientServices(this WebApplicationBuilder builder)
         {
             builder.AddHttpClientService<IRegistersService, RegistersService>(settings => settings.ServiceUrl);
+            builder.AddHttpClientService<ICatalogService, CatalogService>(settings => settings.ServiceUrl);
         }
 
         private static void AddHttpClientService<TInterface, TImplementation>(
