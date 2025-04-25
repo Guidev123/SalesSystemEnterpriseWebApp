@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 using SalesSystem.UI.Services.Interfaces;
 using SalesSystem.UI.ViewModels;
 
@@ -9,6 +10,9 @@ namespace SalesSystem.UI.Components.Pages.Catalog
     {
         [Parameter]
         public Guid ProductId { get; set; }
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; } = default!;
 
         [Inject]
         private ICatalogService CatalogService { get; set; } = default!;
@@ -24,6 +28,7 @@ namespace SalesSystem.UI.Components.Pages.Catalog
 
         public ResponseViewModel<ProductDetailsViewModel?>? Response;
         public bool IsLoading = true;
+        public int Quantity = 1; 
 
         protected override async Task OnInitializedAsync()
         {
@@ -54,6 +59,7 @@ namespace SalesSystem.UI.Components.Pages.Catalog
             if (!authState.User.Identity?.IsAuthenticated ?? false)
             {
                 NavigationManager.NavigateTo("sign-in");
+                Snackbar.Add("You need be authenticated to add items to your order", Severity.Success);
                 return;
             }
 
@@ -63,7 +69,7 @@ namespace SalesSystem.UI.Components.Pages.Catalog
             var orderItem = new AddOrderItemViewModel(
                 product.Id,
                 product.Name,
-                1,
+                Quantity,
                 product.Price
             );
 
@@ -73,15 +79,18 @@ namespace SalesSystem.UI.Components.Pages.Catalog
                 if (result?.IsSuccess == true)
                 {
                     NavigationManager.NavigateTo("/cart");
+                    Snackbar.Add("Item added to order!", Severity.Success);
                 }
                 else
                 {
-                    Response = new ResponseViewModel<ProductDetailsViewModel?>(Response.Data, false, new List<string> { "Failed to add item to cart" }, null);
+                    NavigationManager.NavigateTo("/");
+                    Snackbar.Add("Failed to add item to cart", Severity.Error);
                 }
             }
             catch (Exception)
             {
-                Response = new ResponseViewModel<ProductDetailsViewModel?>(Response.Data, false, new List<string> { "An error occurred while adding to cart" }, null);
+                NavigationManager.NavigateTo("/error");
+                Snackbar.Add("Failed to add item to cart", Severity.Error);
             }
             finally
             {
