@@ -6,6 +6,7 @@ namespace SalesSystem.UI.Services.Interfaces
     {
         Task<ResponseViewModel?> AddOrderItemAsync(AddOrderItemViewModel orderItem);
         Task<ResponseViewModel<OrderSummaryViewModel?>?> GetOrderSummaryAsync();
-        Task<ResponseViewModel> UpdateOrderItemAsync(Guid orderItemId, int quantity);
+        Task<ResponseViewModel?> UpdateOrderItemAsync(UpdateOrderItemViewModel updateOrderItem);
+        Task<ResponseViewModel?> RemoveOrderItemAsync(Guid productId);
     }
 }

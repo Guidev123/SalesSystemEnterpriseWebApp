@@ -23,12 +23,31 @@
                                 <MudTh>Unit Price</MudTh>
                                 <MudTh>Quantity</MudTh>
                                 <MudTh>Total</MudTh>
+                                <MudTh>Actions</MudTh>
                             </HeaderContent>
                             <RowTemplate Context="cartItem">
                                 <MudTd>@cartItem.ProductName</MudTd>
                                 <MudTd>@($"${cartItem.UnitPrice:F2}")</MudTd>
-                                <MudTd>@cartItem.Quantity</MudTd>
+                                <MudTd>
+                                    <MudNumericField @bind-Value="@Quantities[cartItem.ProductId]" Min="1" Max="99" Step="1" Variant="Variant.Outlined" Class="mud-width-small" />
+                                </MudTd>
                                 <MudTd>@($"${cartItem.TotalPrice:F2}")</MudTd>
+                                <MudTd>
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => UpdateQuantity(cartItem.ProductId))" Disabled="@(IsUpdating[cartItem.ProductId])">
+                                        @if (IsUpdating[cartItem.ProductId])
+                                        {
+                                            <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
+                                        }
+                                        else
+                                        {
+                                            <span>Update</span>
+                                        }
+                                    </MudButton>
+                                    <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => DeleteItem(cartItem.ProductId))" Disabled="@(IsUpdating[cartItem.ProductId])">
+                                        <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                                        <span>Delete</span>
+                                    </MudButton>
+                                </MudTd>
                             </RowTemplate>
                         </MudTable>
 
@@ -50,6 +69,9 @@
                     else
                     {
                         <MudAlert Severity="Severity.Info">Your cart is empty.</MudAlert>
+                        <MudItem xs="12" sm="6" class="mt-5">
+                            <MudButton Href="/" Variant="Variant.Filled" Color="Color.Primary">Buy now!</MudButton>
+                        </MudItem>
                     }
                 </MudPaper>
             }
@@ -58,7 +80,6 @@
                 <MudAlert Severity="Severity.Error" Class="my-4">Unable to load cart. Please try again later.</MudAlert>
             }
         </MudContainer>
-
     </Authorized>
     <NotAuthorized>
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-4">
@@ -67,4 +88,3 @@
         </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
-

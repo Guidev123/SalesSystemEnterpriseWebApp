@@ -18,6 +18,8 @@ namespace SalesSystem.UI.Components.Pages.Sales
 
         public ResponseViewModel<OrderSummaryViewModel?>? Response;
         public bool IsLoading = true;
+        public Dictionary<Guid, int> Quantities = [];
+        public Dictionary<Guid, bool> IsUpdating = [];
 
         protected override async Task OnInitializedAsync()
         {
@@ -30,6 +32,14 @@ namespace SalesSystem.UI.Components.Pages.Sales
             {
                 IsLoading = true;
                 Response = await SalesService.GetOrderSummaryAsync();
+                if (Response?.IsSuccess == true && Response.Data != null)
+                {
+                    foreach (var item in Response.Data.Items)
+                    {
+                        Quantities[item.ProductId] = item.Quantity;
+                        IsUpdating[item.ProductId] = false;
+                    }
+                }
             }
             catch (Exception)
             {
@@ -46,6 +56,68 @@ namespace SalesSystem.UI.Components.Pages.Sales
         public void ContinueShopping()
         {
             NavigationManager.NavigateTo("/");
+        }
+
+        public async Task UpdateQuantity(Guid productId)
+        {
+            if (!Quantities.TryGetValue(productId, out int quantity)) return;
+            if (quantity < 1) return;
+
+            IsUpdating[productId] = true;
+            StateHasChanged();
+
+            try
+            {
+                var updateModel = new UpdateOrderItemViewModel(productId, quantity);
+                var result = await SalesService.UpdateOrderItemAsync(updateModel);
+                if (result?.IsSuccess == true)
+                {
+                    await LoadCartSummaryAsync();
+                    Snackbar.Add("Quantity updated successfully!", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add("Failed to update quantity.", Severity.Error);
+                }
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("An error occurred while updating quantity.", Severity.Error);
+            }
+            finally
+            {
+                IsUpdating[productId] = false;
+                StateHasChanged();
+            }
+        }
+
+        public async Task DeleteItem(Guid productId)
+        {
+            IsUpdating[productId] = true;
+            StateHasChanged();
+
+            try
+            {
+                var result = await SalesService.RemoveOrderItemAsync(productId);
+                if (result?.IsSuccess == true)
+                {
+                    await LoadCartSummaryAsync();
+                    Snackbar.Add("Item removed from cart successfully!", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add("Failed to remove item from cart.", Severity.Error);
+                }
+            }
+            catch (Exception)
+            {
+                Snackbar.Add("An error occurred while removing the item.", Severity.Error);
+            }
+            finally
+            {
+                IsUpdating[productId] = false;
+                StateHasChanged();
+            }
         }
     }
 }
