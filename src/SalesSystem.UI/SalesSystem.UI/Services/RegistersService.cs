@@ -19,5 +19,4 @@ namespace SalesSystem.UI.Services
             throw new NotImplementedException();
         }
     }
-
 }

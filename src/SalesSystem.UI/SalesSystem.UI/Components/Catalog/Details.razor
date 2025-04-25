@@ -1,0 +1,34 @@
+﻿@page "/details/{productId:guid}"
+@inherits DetailsPage
+
+<PageTitle>Product Details</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="my-4">
+    @if (IsLoading)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Class="d-flex align-center justify-center" />
+    }
+    else if (Response?.IsSuccess == true && Response.Data != null)
+    {
+        var productResponse = Response.Data;
+        <MudPaper Elevation="2" Class="pa-4">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudCardMedia Image="@productResponse.Product.Image" Height="300" Class="rounded-lg" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudText Typo="Typo.h5" Class="mb-2">@productResponse.Product.Name</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">@productResponse.Product.Category.Name</MudText>
+                    <MudText Typo="Typo.body1" Class="mb-2">@productResponse.Product.Description</MudText>
+                    <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">@($"${productResponse.Product.Price:F2}")</MudText>
+                    <MudText Typo="Typo.body2" Class="mb-1"><b>Stock:</b> @productResponse.Product.QuantityInStock units</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="GoBack">Back to Catalog</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Error" Class="my-4">Product not found or an error occurred.</MudAlert>
+    }
+</MudContainer>
